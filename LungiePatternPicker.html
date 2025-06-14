@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lungi Color Pattern</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(95deg, #ff9a9e, #fad0c4, #fad0c4, #ffdde1);
+            overflow: scroll;  /* Allows vertical scrolling */
+            overflow-x: hidden;            
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .panel {
+            width: 80vw;
+            height: 40vh;
+            background-color: white;
+            border: 2px solid black;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;  /* Add margin to prevent overlap and spacing issues */
+        }
+        .line {
+            width: 1px;
+            height: 100%;
+            background-color: white;
+            position: absolute;
+            cursor: pointer;
+        }
+        .textarea-section {
+            width: 80vw;
+            margin: 10px 0;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid black;
+            resize: none;
+        }
+        .panel-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: center;
+            font-size: 18px;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-y: auto;  /* Allow scrolling on the entire page */
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="width: max-content;">
+        <div class="row mb-3">
+            <div class="col-md-2">
+                <label for="prColor" class="form-label">Parent Color:</label>
+                <input type="color" class="form-control form-control-color" id="prColor" value="#FFFFFF">
+            </div>
+            <div class="col-md-2">
+                <label for="chColor" class="form-label">Child Color:</label>
+                <input type="color" class="form-control form-control-color" id="chColor" value="#000000">
+            </div>
+            <div class="col-md-2">
+                <label for="start" class="form-label">Start:</label>
+                <input type="number" class="form-control" id="start">
+            </div>
+            <div class="col-md-2">
+                <label for="end" class="form-label">End:</label>
+                <input type="number" class="form-control" id="end">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button id="okButton" class="btn btn-primary w-100">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-label">Panel 1</div>
+    <div class="panel" id="panel1"></div>
+
+    <!-- <div class="textarea-section">
+        <input type="text" style="width: 100%;" disabled id="paneltxt1">
+    </div> -->
+
+    <div class="panel-label">Panel 2</div>
+    <div class="panel" id="panel2"></div>
+
+    <div class="panel-label">Panel 3</div>
+    <div class="panel" id="panel3"></div>
+
+    <div class="panel-label">Panel 4</div>
+    <div class="panel" id="panel4"></div>
+
+    <script>
+        const panel1 = document.getElementById("panel1");
+        const panel2 = document.getElementById("panel2");
+        const panel3 = document.getElementById("panel3");
+        const panel4 = document.getElementById("panel4");
+
+        const parentColorPicker = document.getElementById("prColor");
+        const childColorPicker = document.getElementById("chColor");
+        const startInput = document.getElementById("start");
+        const endInput = document.getElementById("end");
+        const okButton = document.getElementById("okButton");
+
+        function createLines(panel, startNumber, count) {
+            for (let i = startNumber; i < startNumber + count; i++) {
+                let line = document.createElement("div");
+                line.className = "line";
+                line.id = i;
+                line.style.left = `${(i - startNumber) * 2}px`;
+                line.dataset.index = i;
+                line.setAttribute("data-bs-toggle", "tooltip");
+                line.setAttribute("title", `Line No: ${i}`);
+                panel.appendChild(line);
+            }
+        }
+
+        createLines(panel1, 1, 610);  // First 610 lines in Panel 1
+        createLines(panel2, 611, 610);  // Next 610 lines in Panel 2 (611-1220)
+        createLines(panel3, 1221, 610);  // Next 610 lines in Panel 2 (1221-1830)
+        createLines(panel4, 1831, 610);  // Next 610 lines in Panel 2 (1831-2440)
+
+        parentColorPicker.addEventListener("input", (e) => {
+            document.querySelectorAll(".line").forEach(line => {
+                line.style.backgroundColor = e.target.value;
+            });
+        });
+
+        okButton.addEventListener("click", () => {
+            let start = parseInt(startInput.value);
+            let end = parseInt(endInput.value);
+            let color = childColorPicker.value;
+
+            if (!isNaN(start) && !isNaN(end) && start >= 1 && end <= 2440 && start <= end) {
+                for (let i = start; i <= end; i++) {
+                    let line = document.getElementById(i);
+                    if (line) {
+                        line.style.backgroundColor = color;
+                    }
+                }
+                var colorName  = color2name.closest(color); // returns "name" : "midnightblue" , "color" : "rgb(25,25,112)"
+
+                let panelText = document.getElementById("paneltxt1");
+                let currentText = panelText.value;
+
+                let newCombination = `${start}-${end}-${colorName.name};`;
+                if (!currentText.includes(`${start}-${end}-`)) {
+                    panelText.value += newCombination;
+                }
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl, {
+                    html: true
+                });
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.unpkg.com/color-2-name"></script>
+</body>
+</html>		
